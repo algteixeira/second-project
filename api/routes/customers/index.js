@@ -54,13 +54,40 @@ routerCustomer.put('/:id', async (req,res) => {
         const data = Object.assign({}, results, {id: id});
         const customer = new Customer(data);
         await customer.changeContent();
-        console.log(customer);
         res.end();
 
     } catch (error) {
         res.send(JSON.stringify({
             message: error.message
         }))
+    }
+});
+
+routerCustomer.delete('/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        const customer = new Customer({id: id});
+        const results = await TableModel.findOne({
+            where: {
+                id : id
+            }
+        })
+        TableModel.destroy({
+            where: {
+                id: id
+            }
+        })
+        res.status(204);
+        res.end();
+    } catch (error) {
+        res.status(404);
+        res.send(
+            JSON.stringify(
+                {
+                    message: error.message
+                }
+            )
+        )
     }
 });
 
