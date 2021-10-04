@@ -47,5 +47,22 @@ routerCustomer.get('/:id', async (req, res) => {
 
 }); 
 
+routerCustomer.put('/:id', async (req,res) => {
+    try {
+        const id = req.params.id;
+        const results = req.body;
+        const data = Object.assign({}, results, {id: id});
+        const customer = new Customer(data);
+        await customer.changeContent();
+        console.log(customer);
+        res.end();
+
+    } catch (error) {
+        res.send(JSON.stringify({
+            message: error.message
+        }))
+    }
+});
+
 
 module.exports = routerCustomer;
