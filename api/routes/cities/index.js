@@ -21,4 +21,28 @@ router.post('/', async(req, res) => {
     );
 });
 
+router.get('/:cityname', async (req, res) => {
+    const cityName = req.params.cityname;
+    let results;
+    if (cityName.length == 2) {
+        results = await TableModel.findAll({
+            where: {
+                state: cityName
+            }
+        })
+    } else {
+    //const city = new City({name: cityName});
+        results = await TableModel.findAll({
+            where: {
+                name: cityName
+            }
+        })
+    } 
+    res.send(
+        JSON.stringify(results)
+    );
+
+});
+
+
 module.exports = router;
