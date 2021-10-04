@@ -6,44 +6,73 @@ const Customer = require('./Customer');
 
 
 routerCustomer.get('/', async (req, res) => {
-    if (req.query.full_name != undefined) {
-        const results = await TableModel.findOne({
+    try {
+        if (req.query.full_name == undefined) {
+            throw new Error('Missing customer name for searching');
+        }
+        const results = await TableModel.findAll({
             where: {
                 full_name: req.query.full_name
             }
         }
         )
+        res.status(200);
         res.send(
             JSON.stringify(results)
         );
+    } catch (error) {
+        res.status(400)
+        res.send(
+            JSON.stringify({
+                message: error.message
+            })
+        );
     } 
-});
+    }
+);
 
 routerCustomer.post('/', async(req, res) => {
-    const receivedData = req.body;
-    customer = new Customer(receivedData);
-    await customer.create();
-    res.send(
-        JSON.stringify(customer)
-    );
+    try {
+        const receivedData = req.body;
+        customer = new Customer(receivedData);
+        await customer.create();
+        res.status(201);
+        res.send(
+            JSON.stringify(customer)
+        );
+    } catch (error) {
+        res.status(400);
+        res.send(
+            JSON.stringify({
+                message: error.message
+            })
+        );
+    }
 });
 
 routerCustomer.get('/:id', async (req, res) => {
-    const id = req.params.id;
-    if (id == undefined) {
+    try {
+        const id = req.params.id;
+        const results = await TableModel.findOne({
+            where: {
+                id : id
+            }
+        })
+        if (results == null) {
+            throw new Error('Theres no customer with this id');
+        }
+        res.status(200);
         res.send(
-            console.log('Undefined')
+            JSON.stringify(results)
+        );
+    } catch(error) {
+        res.status(404)
+        res.send(
+            JSON.stringify({
+                message: error.message
+            })
         )
     }
-    const results = await TableModel.findOne({
-        where: {
-            id : id
-        }
-    })
-    
-    res.send(
-        JSON.stringify(results)
-    );
 
 }); 
 
@@ -54,9 +83,11 @@ routerCustomer.put('/:id', async (req,res) => {
         const data = Object.assign({}, results, {id: id});
         const customer = new Customer(data);
         await customer.changeContent();
+        res.status(204);
         res.end();
 
     } catch (error) {
+        res.status(400);
         res.send(JSON.stringify({
             message: error.message
         }))
@@ -66,12 +97,14 @@ routerCustomer.put('/:id', async (req,res) => {
 routerCustomer.delete('/:id', async (req, res) => {
     try {
         const id = req.params.id;
-        const customer = new Customer({id: id});
         const results = await TableModel.findOne({
             where: {
                 id : id
             }
         })
+        if (results == null) {
+            throw new Error('Theres no customer with this id');
+        }
         TableModel.destroy({
             where: {
                 id: id

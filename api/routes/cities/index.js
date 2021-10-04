@@ -6,43 +6,60 @@ const City = require('./City');
 
 
 router.get('/', async (req, res) => {
-    const results = await TableModel.findAll();
-    res.send(
-        JSON.stringify(results)
-    );
+    let results;
+    try {
+        if (req.query.name == undefined && req.query.state == undefined) {
+            throw new Error('Please, insert a parameter to search');
+        }
+        else if (req.query.name != undefined) {
+            results = await TableModel.findAll({
+                where: {
+                    name: req.query.name
+                }
+            }
+            )
+        }
+        else if (req.query.state != undefined) {
+            results = await TableModel.findAll({
+                where: {
+                    state: req.query.state
+                }
+            })
+        }
+        res.status(200);
+        res.send(
+            JSON.stringify(results)
+        );
+    } catch(error) {
+        res.status(400);
+        res.send(
+            JSON.stringify({
+                message: error.message
+            })
+        );
+    }
 });
 
 router.post('/', async(req, res) => {
-    const receivedData = req.body;
-    city = new City(receivedData);
-    await city.create();
-    res.send(
-        JSON.stringify(city)
-    );
+    try{
+        const receivedData = req.body;
+        city = new City(receivedData);
+        await city.create();
+        res.status(201);
+        res.send(
+            JSON.stringify(city)
+        );
+    } catch (error) {
+        res.status(400);
+        res.send(
+            JSON.stringify({
+                message: error.message
+            })
+        );
+    }
 });
 
-router.get('/:cityname', async (req, res) => {
-    const cityName = req.params.cityname;
-    let results;
-    if (cityName.length == 2) {
-        results = await TableModel.findAll({
-            where: {
-                state: cityName
-            }
-        })
-    } else {
-    //const city = new City({name: cityName});
-        results = await TableModel.findAll({
-            where: {
-                name: cityName
-            }
-        })
-    } 
-    res.send(
-        JSON.stringify(results)
-    );
 
-});
 
 
 module.exports = router;
