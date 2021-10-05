@@ -9,16 +9,12 @@ routerCustomer.get('/', async (req, res) => {
     try {
         if (req.query.full_name == undefined) {
             throw new Error('Missing customer name for searching');
-        }
-        const results = await TableModel.findAll({
-            where: {
-                full_name: req.query.full_name
-            }
-        }
-        )
+        } 
+        const customer = new Customer({full_name:req.query.full_name});
+        const result = await customer.getByName()
         res.status(200);
         res.send(
-            JSON.stringify(results)
+            JSON.stringify(result)
         );
     } catch (error) {
         res.status(400)
@@ -53,11 +49,8 @@ routerCustomer.post('/', async(req, res) => {
 routerCustomer.get('/:id', async (req, res) => {
     try {
         const id = req.params.id;
-        const results = await TableModel.findOne({
-            where: {
-                id : id
-            }
-        })
+        const customer = new Customer({id:id});
+        const results = await customer.getById(id);
         if (results == null) {
             throw new Error('Theres no customer with this id');
         }
@@ -76,7 +69,7 @@ routerCustomer.get('/:id', async (req, res) => {
 
 }); 
 
-routerCustomer.put('/:id', async (req,res) => {
+routerCustomer.patch('/:id', async (req,res) => {
     try {
         const id = req.params.id;
         const results = req.body;
@@ -97,19 +90,12 @@ routerCustomer.put('/:id', async (req,res) => {
 routerCustomer.delete('/:id', async (req, res) => {
     try {
         const id = req.params.id;
-        const results = await TableModel.findOne({
-            where: {
-                id : id
-            }
-        })
+        const customer = new Customer({id:id});
+        const results = await customer.getById();
         if (results == null) {
             throw new Error('Theres no customer with this id');
         }
-        TableModel.destroy({
-            where: {
-                id: id
-            }
-        })
+        customer.removeCustomer();
         res.status(204);
         res.end();
     } catch (error) {

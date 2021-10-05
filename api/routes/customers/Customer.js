@@ -27,6 +27,24 @@ class Customer {
         this.updatedAt = result.updatedAt;
     }
 
+    async getById(){
+        const results = await TableCustomers.findOne({
+            where: {
+                id : this.id
+            }
+        })
+        return results;
+    }
+
+    async getByName(){
+        const results = await TableCustomers.findAll({
+            where: {
+                full_name : this.full_name
+            }
+        })
+        return results;
+    }
+
     async changeContent() {
         const resultant = await TableCustomers.findOne({
             where: {
@@ -46,12 +64,20 @@ class Customer {
         })
 
         if (Object.keys(newContent).length === 0) {
-            throw new Error('No data to insert');
+            throw new Error('Invalid parameters');
         }
 
         await TableCustomers.update(newContent, {
             where: {id : this.id}
         })
+    }
+
+    async removeCustomer () {
+        await TableCustomers.destroy({
+            where: {
+                id: this.id
+            }
+        });
     }
 
 }
