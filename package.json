@@ -4,7 +4,9 @@
   "description": "A project made for Compasso UOL",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "createdb": "node api/data-base/createTables.js",
+    "start" : "node api/index.js"
   },
   "repository": {
     "type": "git",

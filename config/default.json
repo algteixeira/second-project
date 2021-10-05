@@ -1,9 +1,9 @@
 {
     "mysql": {
         "data-base": "gov-portal",
-        "user": "root",
-        "password": "C0nnect123",
-        "host": "127.0.0.1"
+        "user": "user",
+        "password": "12345",
+        "host": "host"
     },
 
     "api": {
