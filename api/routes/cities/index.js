@@ -6,25 +6,19 @@ const City = require('./City');
 
 
 router.get('/', async (req, res) => {
-    let results;
     try {
+        let results;
+        let cities;
         if (req.query.name == undefined && req.query.state == undefined) {
             throw new Error('Please, insert a parameter to search');
         }
         else if (req.query.name != undefined) {
-            results = await TableModel.findAll({
-                where: {
-                    name: req.query.name
-                }
-            }
-            )
+            cities = new City({name:req.query.name});
+            results = await cities.getByName();
         }
         else if (req.query.state != undefined) {
-            results = await TableModel.findAll({
-                where: {
-                    state: req.query.state
-                }
-            })
+            cities = new City({state:req.query.state});
+            results = await cities.getByState();
         }
         res.status(200);
         res.send(

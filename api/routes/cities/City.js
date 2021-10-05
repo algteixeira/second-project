@@ -19,6 +19,24 @@ class City {
         this.createdAt = result.createdAt;
         this.updatedAt = result.updatedAt;
     }
+
+    async getByName() {
+        const result = await TableCities.findAll({
+            where: {
+                name : this.name
+            }
+        })
+        return result;
+    }
+
+    async getByState() {
+        const result = await TableCities.findAll({
+            where: {
+                state : this.state
+            }
+        })
+        return result;
+    }
 }
 
 module.exports = City
