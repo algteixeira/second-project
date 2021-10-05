@@ -1,8 +1,8 @@
 {
     "mysql": {
         "data-base": "gov-portal",
-        "user": "user",
-        "password": "12345",
+        "user": "root",
+        "password": "password",
         "host": "host"
     },
 

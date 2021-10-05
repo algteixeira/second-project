@@ -72,10 +72,9 @@ routerCustomer.get('/:id', async (req, res) => {
 routerCustomer.patch('/:id', async (req,res) => {
     try {
         const id = req.params.id;
-        const results = req.body;
-        const data = Object.assign({}, results, {id: id});
-        const customer = new Customer(data);
-        await customer.changeContent();
+        const customer = new Customer({id:id});
+        const results = await customer.changeContent(req.body.full_name);
+
         res.status(204);
         res.end();
 

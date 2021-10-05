@@ -45,31 +45,21 @@ class Customer {
         return results;
     }
 
-    async changeContent() {
-        const resultant = await TableCustomers.findOne({
+    async changeContent(full_name) {
+        if (full_name == null || full_name == undefined) {
+            throw new Error('no name to update');
+        } 
+        if (typeof(full_name) != 'string') {
+            throw new Error('invalid name format');
+        }
+        await TableModel.update({
+            full_name: full_name
+        },
+        {
             where: {
                 id: this.id
             }
-        })
-        const fields = ['full_name'];
-        const newContent = {};
-
-        fields.forEach((field) => {
-            const value = this[field];
-
-            if (typeof value === 'string' && value.length > 0) {
-                newContent[field] = value;
-                console.log(newContent);
-            }
-        })
-
-        if (Object.keys(newContent).length === 0) {
-            throw new Error('Invalid parameters');
-        }
-
-        await TableCustomers.update(newContent, {
-            where: {id : this.id}
-        })
+        });
     }
 
     async removeCustomer () {
